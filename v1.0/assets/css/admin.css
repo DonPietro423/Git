@@ -1,0 +1,23 @@
+.p3dv-admin-fields {
+	max-width: 900px;
+}
+
+.p3dv-admin-fields p {
+	margin-bottom: 18px;
+}
+
+.p3dv-admin-fields .button {
+	margin-top: 8px;
+}
+
+.p3dv-admin-fields code {
+	display: inline-block;
+	padding: 8px 10px;
+	background: #f6f7f7;
+	border-radius: 6px;
+	font-size: 13px;
+}
+
+.p3dv-color-field {
+	max-width: 120px;
+}
