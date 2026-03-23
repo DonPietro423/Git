@@ -47,6 +47,49 @@
     });
   };
 
+  const frameModel = (model, camera, controls) => {
+    const box = new THREE.Box3().setFromObject(model);
+
+    if (box.isEmpty()) {
+      camera.position.set(0, 1.15, 4.2);
+      controls.target.set(0, 0, 0);
+      controls.update();
+
+      return {
+        position: new THREE.Vector3(0, 1.15, 4.2),
+        target: new THREE.Vector3(0, 0, 0)
+      };
+    }
+
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+
+    model.position.sub(center);
+
+    const maxDim = Math.max(size.x, size.y, size.z) || 1;
+    const fov = camera.fov * (Math.PI / 180);
+    let cameraZ = Math.abs((maxDim / 2) / Math.tan(fov / 2));
+
+    cameraZ *= 1.8;
+
+    const cameraY = Math.max(maxDim * 0.2, 0.5);
+
+    camera.position.set(0, cameraY, cameraZ);
+    camera.near = Math.max(0.01, maxDim / 100);
+    camera.far = Math.max(1000, maxDim * 20);
+    camera.updateProjectionMatrix();
+
+    controls.target.set(0, 0, 0);
+    controls.minDistance = Math.max(maxDim * 0.5, 0.5);
+    controls.maxDistance = Math.max(maxDim * 10, 10);
+    controls.update();
+
+    return {
+      position: camera.position.clone(),
+      target: controls.target.clone()
+    };
+  };
+
   window.SPHERA_VIEWERS.forEach((config) => {
     const container = document.getElementById(config.id);
     if (!container) return;
@@ -114,12 +157,20 @@
       }
     };
 
-    const finishSetup = (model) => {
-      viewers.set(config.id, { camera, controls, renderer, scene, model });
+    const finishSetup = (model, defaultView) => {
+      viewers.set(config.id, {
+        camera,
+        controls,
+        renderer,
+        scene,
+        model,
+        defaultView
+      });
 
       const animate = () => {
         const viewer = viewers.get(config.id);
         if (!viewer) return;
+
         requestAnimationFrame(animate);
         viewer.controls.update();
         viewer.renderer.render(viewer.scene, viewer.camera);
@@ -149,17 +200,24 @@
           });
 
           scene.add(model);
-          finishSetup(model);
+
+          const defaultView = frameModel(model, camera, controls);
+          finishSetup(model, defaultView);
         },
         undefined,
-        () => {
+        (error) => {
+          console.error('SPHERA: error loading model.', error);
           setFallback();
-          finishSetup(fallbackMesh);
+
+          const defaultView = frameModel(fallbackMesh, camera, controls);
+          finishSetup(fallbackMesh, defaultView);
         }
       );
     } else {
       setFallback();
-      finishSetup(fallbackMesh);
+
+      const defaultView = frameModel(fallbackMesh, camera, controls);
+      finishSetup(fallbackMesh, defaultView);
     }
 
     const onResize = () => {
@@ -182,8 +240,14 @@
     const viewer = viewers.get(target);
     if (!viewer) return;
 
-    viewer.camera.position.set(0, 1.15, 4.2);
-    viewer.controls.target.set(0, 0, 0);
+    if (viewer.defaultView) {
+      viewer.camera.position.copy(viewer.defaultView.position);
+      viewer.controls.target.copy(viewer.defaultView.target);
+    } else {
+      viewer.camera.position.set(0, 1.15, 4.2);
+      viewer.controls.target.set(0, 0, 0);
+    }
+
     viewer.controls.update();
   });
 })();

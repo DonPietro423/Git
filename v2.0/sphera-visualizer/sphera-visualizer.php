@@ -19,6 +19,34 @@ define('SPHERA_PATH', plugin_dir_path(__FILE__));
 define('SPHERA_URL', plugin_dir_url(__FILE__));
 define('SPHERA_BASENAME', plugin_basename(__FILE__));
 
+add_filter('upload_mimes', function ($mimes) {
+    $mimes['glb']  = 'model/gltf-binary';
+    $mimes['gltf'] = 'model/gltf+json';
+    return $mimes;
+});
+
+add_filter('wp_check_filetype_and_ext', function ($data, $file, $filename, $mimes) {
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+    if ($ext === 'glb') {
+        return [
+            'ext'             => 'glb',
+            'type'            => 'model/gltf-binary',
+            'proper_filename' => $filename,
+        ];
+    }
+
+    if ($ext === 'gltf') {
+        return [
+            'ext'             => 'gltf',
+            'type'            => 'model/gltf+json',
+            'proper_filename' => $filename,
+        ];
+    }
+
+    return $data;
+}, 10, 4);
+
 require_once SPHERA_PATH . 'includes/class-sphera-helpers.php';
 require_once SPHERA_PATH . 'includes/class-sphera-plugin.php';
 
