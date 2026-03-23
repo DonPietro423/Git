@@ -1,0 +1,51 @@
+SPHERA • EXTENSION VISUALIZER 3D
+
+FONCTIONNALITÉS DU PLUGIN :
+* un champ dans l’admin produit pour associer un fichier .GLB
+* un bouton activer/désactiver le viewer
+* choix de la couleur de fond
+* option autoplay rotation
+* option zoom autorisé ou non
+* affichage sur la fiche produit avec orbit controls
+* message de fallback si aucun modèle n’est défini
+* animation d’entrée du modèle
+* bouton plein écran
+* changement d’éclairage
+* hotspot sur certaines zones du modèle
+* plusieurs vues prédéfinies
+* variation selon produit ou couleur
+
+DA DU PLUGIN :
+Base de plugin WordPress avec back-office et front-office, pensée pour coller à la DA SPHERA: bleu roi, iridescent, UI propre, typo moderne.
+La charte simplifiée utilisée ici reprend les axes visibles sur le moodboard: palette principale bleue, palette iridescente, neutres UI,
+RoadRadio en display et Manrope en secondaire.
+
+ARBORESCENCE DU PLUGIN :
+sphera-visualizer/
+├─ sphera-visualizer.php
+├─ uninstall.php
+├─ index.php
+├─ assets/
+│  ├─ css/
+│  │  ├─ admin.css
+│  │  └─ public.css
+│  ├─ js/
+│  │  ├─ admin.js
+│  │  └─ public.js
+│  └─ img/
+│     ├─ sphera-symbol.png
+│     ├─ sphera-wordmark.png
+│     └─ sphera-logotype.png
+└─ includes/
+   ├─ index.php
+   ├─ class-sphera-plugin.php
+   ├─ class-sphera-admin.php
+   ├─ class-sphera-public.php
+   ├─ class-sphera-renderer.php
+   └─ class-sphera-helpers.php
+
+UTILISATION :
+Shortcode simple :
+[sphera_viewer]
+Avec options :
+[sphera_viewer brand="symbol" height="700" auto_rotate="true" show_grid="false"]
