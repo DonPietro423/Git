@@ -1,0 +1,15 @@
+.p3dv-viewer-wrap {
+	width: 100%;
+	border-radius: 16px;
+	overflow: hidden;
+	position: relative;
+}
+
+.p3dv-viewer-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 300px;
+	font-size: 14px;
+	color: #555;
+}
